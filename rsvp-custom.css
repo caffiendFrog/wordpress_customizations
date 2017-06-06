@@ -1,0 +1,110 @@
+#rsvpPlugin {
+    --skc-form-field-width: 350px;
+    --skc-font-color: #e3e1e7 !important;
+    --skc-font-size: 20px !important;
+    --skc-button-color: #262626;
+    --skc-button-size:20px;
+}
+
+label.error { font-weight: bold; clear:both;}
+input.error, textarea.error { border: 2px solid red; }
+
+label {
+    font-color: var(--skc-font-color);
+    margin-right: 20px;
+}
+
+p {
+    font-color: var(--skc-font-color);
+    font-size: 20px;
+}
+
+.entry-content p {
+    font-color: var(--skc-font-color);
+    font-size: 20px;
+}
+
+.entry-content p .rsvpParagraph {
+    font-color: var(--skc-font-color);
+    font-size: 20px;
+}
+
+.rsvpFormField {
+    margin: 10px 0px;
+}
+
+.rsvpFormField textArea {
+    width: var(--skc-form-field-width);
+}
+.rsvpFormField h3 {
+    font-color: var(--skc-font-color);
+}
+
+#rsvpForm h3 {
+    font-color: var(--skc-font-color);
+}
+
+#rsvpCustomGreeting {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.rsvpBorderTop {
+    border-top: 1px solid #ccc;
+}
+.rsvpAdditionalAttendee {
+    text-align:left;
+    border-top: 1px solid #ccc;
+}
+.rsvpCheckboxCustomQ {
+    float: left;
+    padding-right: 10px;
+}
+.rsvpClear {
+    clear: both;
+    height: 1px;
+    line-height: 1px;
+}
+#rsvpPlugin input {
+    display: inline;
+    visibility: visible;
+    margin-right: 5px;
+}
+
+.rsvpFormField  label {
+    display: inline;
+    font-size: 20px;
+    font-color: var(--skc-font-color);
+
+}
+.rsvpParagraph {
+    position: relative;
+    font-size: 20px;
+    font-color: var(--skc-font-color);
+}
+
+.rsvpParagraph .required {
+    position: relative;
+}
+
+.rsvpParagraph input {
+    color: #262626;
+}
+
+#mainEmail {
+    width: var(--skc-form-field-width);
+}
+
+input[type="text"] {
+    width: var(--skc-form-field-width);
+}
+
+input[type="submit"] {
+    color: var(--skc-button-color);
+    font-size: var(--skc-button-size);
+}
+
+button {
+    color: var(--skc-button-color);
+    font-size: var(--skc-button-size);
+}

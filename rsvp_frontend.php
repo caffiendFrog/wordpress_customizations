@@ -247,13 +247,6 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
 
 	$form .= rsvp_buildAdditionalQuestions($attendeeID, "main");
 
-	if(get_option(RSVP_OPTION_HIDE_NOTE) != "Y") {
-  	$form .= RSVP_START_PARA.$noteVerbiage.RSVP_END_PARA.
-      rsvp_BeginningFormField("", "").
-        "<textarea name=\"rsvp_note\" id=\"rsvp_note\" rows=\"7\" cols=\"50\">".((!empty($attendee->note)) ? $attendee->note : $rsvp_saved_form_vars['rsvp_note'])."</textarea>".RSVP_END_FORM_FIELD;
-
-  }
-
 	$sql = "SELECT id, firstName, lastName, email, personalGreeting FROM ".ATTENDEES_TABLE."
 	 	WHERE (id IN (SELECT attendeeID FROM ".ASSOCIATED_ATTENDEES_TABLE." WHERE associatedAttendeeID = %d)
 			OR id in (SELECT associatedAttendeeID FROM ".ASSOCIATED_ATTENDEES_TABLE." WHERE attendeeID = %d) OR
@@ -307,7 +300,7 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
             RSVP_END_FORM_FIELD;
         }
 
-  			$form .= rsvp_buildAdditionalQuestions($a->id, $a->id);
+  			$form .= rsvp_buildAdditionalQuestions($a->id, $a->id, true);
         $form .= "</div>\r\n"; //-- rsvpAdditionalAttendeeQuestions
   			$form .= "</div>\r\n";
 		  } // if($a->id != ...)
@@ -322,13 +315,20 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
     }
 /* SKC 
 		$form .= "<h3>$text</h3>\r\n";
-*/		$form .= "<p class=\"rsvpParagraph\">$text</p>\r\n";
+*/		$form .= "<div class=\"rsvpParagraph\">
+					<img src=\"".get_option("siteurl")."/wp-content/uploads/2017/06/button_add-guest.png\" width=\"130\" border=\"0\" vertical-align=\"middle\" id=\"addRsvp\"/></div>";
+
 		$form .= "<div id=\"additionalRsvpContainer\">\r\n
 								<input type=\"hidden\" name=\"additionalRsvp\" id=\"additionalRsvp\" value=\"".count($newRsvps)."\" />
-								<div style=\"text-align:right\"><img ".
-									"src=\"".get_option("siteurl")."/wp-content/plugins/rsvp/plus.png\" width=\"24\" height=\"24\" border=\"0\" id=\"addRsvp\" /></div>".
-							"</div>";
+				 </div>";
 	}
+
+    if(get_option(RSVP_OPTION_HIDE_NOTE) != "Y") {
+        $form .= RSVP_START_PARA.$noteVerbiage.RSVP_END_PARA.
+            rsvp_BeginningFormField("", "").
+            "<textarea name=\"rsvp_note\" id=\"rsvp_note\" rows=\"7\" cols=\"50\">".((!empty($attendee->note)) ? $attendee->note : $rsvp_saved_form_vars['rsvp_note'])."</textarea>".RSVP_END_FORM_FIELD;
+
+    }
 
 	$form .= RSVP_START_PARA."<input type=\"submit\" value=\"".__("RSVP", 'rsvp-plugin')."\" />".RSVP_END_PARA;
   rsvp_inject_add_guests_js($attendeeID);
@@ -351,7 +351,7 @@ function rsvp_revtrievePreviousAnswer($attendeeID, $questionID) {
 	return $answers;
 }
 
-function rsvp_buildAdditionalQuestions($attendeeID, $prefix) {
+function rsvp_buildAdditionalQuestions($attendeeID, $prefix, $isGuest=false) {
 	global $wpdb, $rsvp_saved_form_vars;
 	$output = "<div class=\"rsvpCustomQuestions\">";
 
@@ -364,7 +364,9 @@ function rsvp_buildAdditionalQuestions($attendeeID, $prefix) {
 	if(count($questions) > 0) {
 		foreach($questions as $q) {
 			$oldAnswer = rsvp_revtrievePreviousAnswer($attendeeID, $q->id);
-
+            if($isGuest) {
+				$q->question = str_replace("you", "your guest", $q->question);
+            }
 			$output .= rsvp_BeginningFormField("", "").RSVP_START_PARA.stripslashes($q->question).RSVP_END_PARA;
 
 				if($q->questionType == QT_MULTI) {
@@ -1214,26 +1216,26 @@ function rsvp_inject_add_guests_js($attendeeID) {
 									jQuery(\"#additionalRsvpContainer\").append(\"<div class=\\\"rsvpAdditionalAttendee\\\">\" + \r\n
                       \"<div class=\\\"rsvpAdditionalAttendeeQuestions\\\">\" + \r\n
 											\"<div class=\\\"rsvpFormField\\\">\" + \r\n
-                      \"	<label for=\\\"newAttending\" + numAdditional + \"FirstName\\\">".__("Person's first name", 'rsvp-plugin')."&nbsp;</label>\" + \r\n
+                      \"	<label for=\\\"newAttending\" + numAdditional + \"FirstName\\\">".__("Guest's first name", 'rsvp-plugin')."&nbsp;</label>\" + \r\n
 												\"  <input type=\\\"text\\\" name=\\\"newAttending\" + numAdditional + \"FirstName\\\" id=\\\"newAttending\" + numAdditional + \"FirstName\\\" />\" + \r\n
 									  	\"</div>\" + \r\n
 											\"<div class=\\\"rsvpFormField\\\">\" + \r\n
-                      \"	<label for=\\\"newAttending\" + numAdditional + \"LastName\\\">".__("Person's last name", 'rsvp-plugin')."</label>\" + \r\n
+                      \"	<label for=\\\"newAttending\" + numAdditional + \"LastName\\\">".__("Guest's last name", 'rsvp-plugin')."</label>\" + \r\n
 												\"  <input type=\\\"text\\\" name=\\\"newAttending\" + numAdditional + \"LastName\\\" id=\\\"newAttending\" + numAdditional + \"LastName\\\" />\" + \r\n
                       \"</div>\" + \r\n";
                       if(get_option(OPTION_RSVP_HIDE_EMAIL_FIELD) != "Y") {
 												$form .= "\"<div class=\\\"rsvpFormField\\\">\" + \r\n
-                        \"	<label for=\\\"newAttending\" + numAdditional + \"Email\\\">".__("Person's email address", 'rsvp-plugin')."</label>\" + \r\n
+                        \"	<label for=\\\"newAttending\" + numAdditional + \"Email\\\">".__("Guest's email address", 'rsvp-plugin')."</label>\" + \r\n
 													\"  <input type=\\\"text\\\" name=\\\"newAttending\" + numAdditional + \"Email\\\" id=\\\"newAttending\" + numAdditional + \"Email\\\" />\" + \r\n
                         \"</div>\" + \r\n";
                       }
 
-									  	$form .= "\"<div class=\\\"rsvpFormField\\\">\" + \r\n
-													\"<p>".__("Will this person be attending?", 'rsvp-plugin')."</p>\" + \r\n
-													\"<input type=\\\"radio\\\" name=\\\"newAttending\" + numAdditional + \"\\\" value=\\\"Y\\\" id=\\\"newAttending\" + numAdditional + \"Y\\\" checked=\\\"checked\\\" /> \" +
-													\"<label for=\\\"newAttending\" + numAdditional + \"Y\\\">$yesText</label> \" +
-													\"<input type=\\\"radio\\\" name=\\\"newAttending\" + numAdditional + \"\\\" value=\\\"N\\\" id=\\\"newAttending\" + numAdditional + \"N\\\"> <label for=\\\"newAttending\" + numAdditional + \"N\\\">$noText</label>\" +
-												\"</div>\" + \r\n";
+//									  	$form .= "\"<div class=\\\"rsvpFormField\\\">\" + \r\n
+//													\"<p>".__("Will this person be attending?", 'rsvp-plugin')."</p>\" + \r\n
+//													\"<input type=\\\"radio\\\" name=\\\"newAttending\" + numAdditional + \"\\\" value=\\\"Y\\\" id=\\\"newAttending\" + numAdditional + \"Y\\\" checked=\\\"checked\\\" /> \" +
+//													\"<label for=\\\"newAttending\" + numAdditional + \"Y\\\">$yesText</label> \" +
+//													\"<input type=\\\"radio\\\" name=\\\"newAttending\" + numAdditional + \"\\\" value=\\\"N\\\" id=\\\"newAttending\" + numAdditional + \"N\\\"> <label for=\\\"newAttending\" + numAdditional + \"N\\\">$noText</label>\" +
+//												\"</div>\" + \r\n";
 											if(get_option(OPTION_HIDE_KIDS_MEAL) != "Y") {
 												$form .= "\"<div class=\\\"rsvpFormField\\\">\" +
                         \"<p>".__("Does this person need a kids meal?", 'rsvp-plugin')."</p>\" +
