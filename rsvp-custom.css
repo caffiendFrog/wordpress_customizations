@@ -19,6 +19,11 @@ p {
     font-size: 20px;
 }
 
+a {
+    font-color: #756b89;
+    font-size: 20px;
+}
+
 .entry-content p {
     font-color: var(--skc-font-color);
     font-size: 20px;
@@ -34,8 +39,10 @@ p {
 }
 
 .rsvpFormField textArea {
-    width: var(--skc-form-field-width);
+    width: 700px;
+    height: 100px;
 }
+
 .rsvpFormField h3 {
     font-color: var(--skc-font-color);
 }
@@ -52,6 +59,8 @@ p {
 .rsvpBorderTop {
     border-top: 1px solid #ccc;
 }
+
+
 .rsvpAdditionalAttendee {
     text-align:left;
     border-top: 1px solid #ccc;

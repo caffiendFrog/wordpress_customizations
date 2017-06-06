@@ -313,7 +313,7 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
     if(trim(get_option(OPTION_RSVP_ADD_ADDITIONAL_VERBIAGE)) != "") {
       $text = get_option(OPTION_RSVP_ADD_ADDITIONAL_VERBIAGE);
     }
-/* SKC 
+/* SKC
 		$form .= "<h3>$text</h3>\r\n";
 */		$form .= "<div class=\"rsvpParagraph\">
 					<img src=\"".get_option("siteurl")."/wp-content/uploads/2017/06/button_add-guest.png\" width=\"130\" border=\"0\" vertical-align=\"middle\" id=\"addRsvp\"/></div>";
@@ -324,8 +324,8 @@ function rsvp_frontend_main_form($attendeeID, $rsvpStep = "handleRsvp") {
 	}
 
     if(get_option(RSVP_OPTION_HIDE_NOTE) != "Y") {
-        $form .= RSVP_START_PARA.$noteVerbiage.RSVP_END_PARA.
-            rsvp_BeginningFormField("", "").
+        $form .= rsvp_BeginningFormField("", "rsvpBorderTop").
+			RSVP_START_PARA.$noteVerbiage.RSVP_END_PARA.
             "<textarea name=\"rsvp_note\" id=\"rsvp_note\" rows=\"7\" cols=\"50\">".((!empty($attendee->note)) ? $attendee->note : $rsvp_saved_form_vars['rsvp_note'])."</textarea>".RSVP_END_FORM_FIELD;
 
     }
@@ -438,9 +438,9 @@ function rsvp_find(&$output, &$text) {
 	if( isset( $_REQUEST['firstName'] ) ) {
 		$firstName = $_REQUEST['firstName'];
 	}
-	
+
 	if( isset( $_REQUEST['lastName'] ) ) {
-		$lastName = $_REQUEST['lastName'];	
+		$lastName = $_REQUEST['lastName'];
 	}
 
 	if( ! $passcodeOnlyOption && ( ( strlen( $firstName ) <= 1 ) || ( strlen( $lastName ) <= 1 ) ) ) {
@@ -473,12 +473,12 @@ function rsvp_find(&$output, &$text) {
 		// hey we found something, we should move on and print out any associated users and let them rsvp
 		$output = RSVP_START_CONTAINER;
 		if(strtolower($attendee->rsvpStatus) == "noresponse") {
-			$output .= RSVP_START_PARA.__("Hi", 'rsvp-plugin')." ".htmlspecialchars(stripslashes($attendee->firstName." ".$attendee->lastName))."!".RSVP_END_PARA;
+			$output .= RSVP_START_PARA.__("Hi", 'rsvp-plugin')." ".htmlspecialchars(stripslashes($attendee->firstName." ".$attendee->lastName))."! ";
 
 			if(trim(get_option(OPTION_WELCOME_TEXT)) != "") {
-				$output .= RSVP_START_PARA.trim(get_option(OPTION_WELCOME_TEXT)).RSVP_END_PARA;
+				$output .= trim(get_option(OPTION_WELCOME_TEXT)).RSVP_END_PARA;
 			} else {
-				$output .= RSVP_START_PARA.__("There are a few more questions we need to ask you if you could please fill them out below to finish up the RSVP process.", 'rsvp-plugin').RSVP_END_PARA;
+				$output .= __("There are a few more questions we need to ask you if you could please fill them out below to finish up the RSVP process.", 'rsvp-plugin').RSVP_END_PARA;
 			}
 
 			$output .= rsvp_frontend_main_form($attendee->id);
@@ -1157,7 +1157,8 @@ function rsvp_frontend_greeting() {
   }
 
 	if(!empty($customGreeting)) {
-		$output = RSVP_START_PARA.nl2br($customGreeting).RSVP_END_PARA;
+		$output = RSVP_START_PARA.nl2br($customGreeting)."<a href=\"mailto:info@simplymeanttobe2017.com?subject=Need help RSVP'ing\"> email us.</a>";
+		RSVP_END_PARA;
 	}
 
   $output .= RSVP_START_CONTAINER;
